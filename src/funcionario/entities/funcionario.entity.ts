@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Dia } from 'src/dia/entities/dia.entity';
+import { Mes } from 'src/mes/entities/mes.entity';
 
 export class Funcionario {
   @ApiProperty()
@@ -7,11 +8,11 @@ export class Funcionario {
   @ApiProperty()
   nome: string;
   @ApiProperty()
-  sobrenome: string;
-  @ApiProperty()
   email: string;
   @ApiProperty()
   senha: string;
+  @ApiProperty()
+  meses: Mes[];
   @ApiProperty()
   dias: Dia[];
 }

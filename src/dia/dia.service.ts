@@ -14,11 +14,24 @@ export class DiaService {
   ) {}
 
   create(createDiaDto: CreateDiaDto) {
-    return this.prismaService.dia.create({ data: createDiaDto });
+    return this.prismaService.dia.create({
+      data: {
+        ...createDiaDto,
+        mesId: createDiaDto.mesId,
+        funcionarioId: createDiaDto.funcionarioId,
+      },
+    });
   }
 
-  findAll() {
-    return this.prismaService.dia.findMany();
+  findAll(mesAno: string, funcionarioId: string) {
+    return this.prismaService.dia.findMany({
+      where: {
+        mes: {
+          mesAno,
+          funcionarioId,
+        },
+      },
+    });
   }
 
   findOne(id: number) {
@@ -46,7 +59,9 @@ export class DiaService {
   async registrarPonto(registrarPonto: RegistrarPonto) {
     switch (registrarPonto.ordemRegistro) {
       case 1: // ENTRADA
-        const { id } = await this.mesService.findMesAnoAtual(); // retorna o id do mes atual
+        const { id } = await this.mesService.findMesAnoAtual(
+          registrarPonto.funcionarioId,
+        ); // retorna o id do mes atual
         return this.create({
           horaEntrada: new Date(),
           mesId: id,
@@ -65,7 +80,9 @@ export class DiaService {
           };
           return this.update(registrarPonto.diaId, diaDto);
         } else {
-          const { id } = await this.mesService.findMesAnoAtual(); // retorna o id do mes atual
+          const { id } = await this.mesService.findMesAnoAtual(
+            registrarPonto.funcionarioId,
+          ); // retorna o id do mes atual
           return this.create({
             horaEntradaAlmoco: new Date(),
             mesId: id,
@@ -79,13 +96,30 @@ export class DiaService {
           horaSaida: new Date(),
         };
 
-        await this.update(registrarPonto.diaId, diaSaidaDto).then(
-          async (res: Dia) => {
+        await this.update(registrarPonto.diaId, diaSaidaDto)
+          .then(async (res: Dia) => {
             await this.atualizarSaldoDia(res).then((diaAtualizado: Dia) => {
               updatedDia = diaAtualizado;
             });
-          },
-        );
+          })
+          .then(async () => {
+            const sumAllDias = await this.prismaService.dia.groupBy({
+              by: ['mesId'],
+              where: {
+                mesId: updatedDia.mesId,
+              },
+              _sum: {
+                saldoDia: true,
+              },
+            });
+
+            await this.prismaService.mes.update({
+              where: { id: updatedDia.mesId },
+              data: {
+                saldoMes: sumAllDias[0]._sum.saldoDia,
+              },
+            });
+          });
         return updatedDia;
     }
   }

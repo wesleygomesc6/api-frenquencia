@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { MesService } from './mes.service';
 import { CreateMesDto } from './dto/create-mes.dto';
@@ -26,8 +27,8 @@ export class MesController {
 
   @Get()
   @ApiCreatedResponse({ type: Mes, isArray: true })
-  findAll() {
-    return this.mesService.findAll();
+  findAll(@Query('funcionarioId') funcionarioId: string) {
+    return this.mesService.findAll(funcionarioId);
   }
 
   @Get(':id')

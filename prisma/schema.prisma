@@ -14,21 +14,23 @@ datasource db {
 }
 
 model Funcionario {
-  id        String  @id @default(uuid())
-  nome      String
-  sobrenome String?
-  email     String  @unique
-  senha     String
-  dias      Dia[]
+  id    String @id @default(uuid())
+  nome  String
+  email String @unique
+  senha String
+  dias  Dia[]
+  meses Mes[]
 
   @@map("funcionarios")
 }
 
 model Mes {
-  id       Int    @id @default(autoincrement())
-  mesAno   String @unique @map("mes_ano")
-  saldoMes Int?   @map("saldo_mes")
-  dias     Dia[]
+  id            Int         @id @default(autoincrement())
+  mesAno        String      @map("mes_ano")
+  saldoMes      Int?        @map("saldo_mes")
+  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+  dias          Dia[]
+  funcionarioId String
 
   @@map("meses")
 }

@@ -7,8 +7,6 @@ export class UpdateFuncionarioDto extends PartialType(CreateFuncionarioDto) {
   @ApiProperty()
   nome: string;
   @ApiProperty()
-  sobrenome: string;
-  @ApiProperty()
   email: string;
   @ApiProperty()
   senha: string;

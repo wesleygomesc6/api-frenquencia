@@ -11,10 +11,10 @@ export class MesService {
     return await this.prismaService.mes.create({ data: createMesDto });
   }
 
-  async findAll() {
+  async findAll(funcionarioId: string) {
     return await this.prismaService.mes.findMany({
-      include: {
-        dias: true,
+      where: {
+        funcionarioId,
       },
     });
   }
@@ -29,12 +29,13 @@ export class MesService {
    * @returns mes atual do banco de dados
    * caso não exista ele cadastra o mes e retorna
    */
-  async findMesAnoAtual() {
+  async findMesAnoAtual(funcionarioId: string) {
     const mes = await this.findMesAtual();
     return await this.prismaService.mes
-      .findUnique({
+      .findFirst({
         where: {
           mesAno: mes,
+          funcionarioId,
         },
         select: {
           id: true,
@@ -47,6 +48,7 @@ export class MesService {
           return this.prismaService.mes.create({
             data: {
               mesAno: mes,
+              funcionarioId,
             },
           });
         }

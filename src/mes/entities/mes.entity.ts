@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Dia } from '@prisma/client';
+import { Dia } from 'src/dia/entities/dia.entity';
+import { Funcionario } from 'src/funcionario/entities/funcionario.entity';
 
 export class Mes {
   @ApiProperty()
@@ -8,6 +9,10 @@ export class Mes {
   mesAno: string;
   @ApiProperty({ example: '3600000' })
   saldoMes: number;
+  @ApiProperty({ example: 'dasfs-f44151-fdafd' })
+  funcionarioId: string;
+  @ApiProperty()
+  funcionario: Funcionario;
   @ApiProperty()
   dias: Dia[];
 }

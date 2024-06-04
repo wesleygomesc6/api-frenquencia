@@ -29,7 +29,6 @@ export class FuncionarioService {
       select: {
         id: true,
         nome: true,
-        sobrenome: true,
         email: true,
         senha: false,
       },
@@ -42,7 +41,6 @@ export class FuncionarioService {
       select: {
         id: true,
         nome: true,
-        sobrenome: true,
         email: true,
         senha: false,
       },

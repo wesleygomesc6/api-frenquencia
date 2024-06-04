@@ -9,12 +9,8 @@ export class CreateDiaDto {
   horaEntradaAlmoco?: Date;
   @ApiProperty({ example: 3600000 })
   horaSaida?: Date;
-  @ApiProperty({ example: 3600000 })
-  saldoDia?: number;
-  @ApiProperty({ example: 3600000 })
-  tempoTrabalhado?: number;
   @ApiProperty({ required: true, example: 24 })
   mesId: number;
-  @ApiProperty({ required: true, example: 'fdaf541fd5f1sa25f' })
-  funcionarioId: string;
+  @ApiProperty({ required: true, example: 'daf6-fdasfsa-fadsfdsa' })
+  funcionarioId?: string;
 }

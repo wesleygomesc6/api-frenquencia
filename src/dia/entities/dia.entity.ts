@@ -18,11 +18,11 @@ export class Dia {
   @ApiProperty()
   tempoTrabalhado: number;
   @ApiProperty()
-  mes?: Mes;
+  mes: Mes;
   @ApiProperty()
   mesId: number;
   @ApiProperty()
-  funcionario?: Funcionario;
-  @ApiProperty()
   funcionarioId: string;
+  @ApiProperty()
+  funcionario?: Funcionario;
 }

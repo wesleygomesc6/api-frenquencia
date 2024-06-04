@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { DiaService } from './dia.service';
 import { CreateDiaDto } from './dto/create-dia.dto';
@@ -33,8 +34,11 @@ export class DiaController {
 
   @Get()
   @ApiCreatedResponse({ type: Dia, isArray: true })
-  findAll() {
-    return this.diaService.findAll();
+  findAll(
+    @Query('mesAno') mesAno: string,
+    @Query('funcionarioId') funcionarioId: string,
+  ) {
+    return this.diaService.findAll(mesAno, funcionarioId);
   }
 
   @Get(':id')

@@ -18,6 +18,6 @@ export class UpdateDiaDto extends PartialType(CreateDiaDto) {
   tempoTrabalhado?: number;
   @ApiProperty({ required: true, example: 24 })
   mesId?: number;
-  @ApiProperty({ required: true, example: 'fdaf541fd5f1sa25f' })
+  @ApiProperty({ required: true, example: 'daf6-fdasfsa-fadsfdsa' })
   funcionarioId?: string;
 }
