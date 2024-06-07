@@ -137,7 +137,12 @@ export class DiaService {
         dia.horaSaida.getTime() - dia.horaEntradaAlmoco.getTime();
     }
 
-    const saldoDia: number = horasTrabalhadas - tempoEsperado;
+    let saldoDia: number;
+    if (tempoEsperado < horasTrabalhadas) {
+      saldoDia = horasTrabalhadas - tempoEsperado;
+    } else {
+      saldoDia = tempoEsperado - horasTrabalhadas;
+    }
 
     const diaDto: UpdateDiaDto = {
       tempoTrabalhado: horasTrabalhadas,
