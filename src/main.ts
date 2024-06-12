@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('API do sistema de frequencia')
     .setDescription('API utilizando NestJS, Prisma e MySql')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

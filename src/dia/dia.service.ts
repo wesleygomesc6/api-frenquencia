@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MesService } from 'src/mes/mes.service';
 import { RegistrarPonto } from './dto/registrar-ponto.dto';
 import { Dia } from './entities/dia.entity';
+import { RegistroRepetidoError } from './errors/registro-repetido-error';
 
 @Injectable()
 export class DiaService {
@@ -57,23 +58,41 @@ export class DiaService {
   }
 
   async registrarPonto(registrarPonto: RegistrarPonto) {
+    let diaAtual: Dia;
+    let mesAtual: any;
+    if (registrarPonto.diaId) {
+      diaAtual = await this.findOne(registrarPonto.diaId);
+    } else {
+      mesAtual = await this.mesService.findMesAnoAtual(
+        registrarPonto.funcionarioId,
+      );
+    }
+
     switch (registrarPonto.ordemRegistro) {
       case 1: // ENTRADA
-        const { id } = await this.mesService.findMesAnoAtual(
-          registrarPonto.funcionarioId,
-        ); // retorna o id do mes atual
+        if (diaAtual.horaEntrada) {
+          throw new RegistroRepetidoError();
+        }
+
         return this.create({
           horaEntrada: new Date(),
-          mesId: id,
+          mesId: mesAtual.id,
           funcionarioId: registrarPonto.funcionarioId,
         });
 
       case 2: // SAIDA_ALMOCO
+        if (diaAtual.horaSaidaAlmoco) {
+          throw new RegistroRepetidoError();
+        }
         const diaDto: UpdateDiaDto = {
           horaSaidaAlmoco: new Date(),
         };
         return this.update(registrarPonto.diaId, diaDto);
       case 3: // ENTRADA_ALMOCO
+        if (diaAtual.horaEntradaAlmoco) {
+          throw new RegistroRepetidoError();
+        }
+
         if (registrarPonto.diaId) {
           const diaDto: UpdateDiaDto = {
             horaEntradaAlmoco: new Date(),
@@ -91,6 +110,9 @@ export class DiaService {
         }
 
       default: // SAIDA
+        if (diaAtual.horaSaida) {
+          throw new RegistroRepetidoError();
+        }
         let updatedDia: Dia;
         const diaSaidaDto: UpdateDiaDto = {
           horaSaida: new Date(),

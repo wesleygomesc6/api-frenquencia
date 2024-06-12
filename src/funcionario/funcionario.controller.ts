@@ -10,11 +10,12 @@ import {
 import { FuncionarioService } from './funcionario.service';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
-import { ApiAcceptedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Funcionario } from './entities/funcionario.entity';
 
-@Controller('funcionario')
+@Controller('funcionarios')
 @ApiTags('Funcionarios')
+@ApiBearerAuth()
 export class FuncionarioController {
   constructor(private readonly funcionarioService: FuncionarioService) {}
 

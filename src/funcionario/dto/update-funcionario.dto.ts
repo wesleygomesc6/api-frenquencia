@@ -3,8 +3,6 @@ import { CreateFuncionarioDto } from './create-funcionario.dto';
 
 export class UpdateFuncionarioDto extends PartialType(CreateFuncionarioDto) {
   @ApiProperty()
-  id: string;
-  @ApiProperty()
   nome: string;
   @ApiProperty()
   email: string;

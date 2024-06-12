@@ -22,6 +22,9 @@ export class MesService {
   async findOne(id: number) {
     return await this.prismaService.mes.findUnique({
       where: { id },
+      include: {
+        dias: true,
+      },
     });
   }
 

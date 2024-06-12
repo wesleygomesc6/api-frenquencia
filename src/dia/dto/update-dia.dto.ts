@@ -2,8 +2,6 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateDiaDto } from './create-dia.dto';
 
 export class UpdateDiaDto extends PartialType(CreateDiaDto) {
-  @ApiProperty({ required: true, example: 25 })
-  id?: number;
   @ApiProperty({ example: 3600000 })
   horaEntrada?: Date;
   @ApiProperty({ example: 3600000 })

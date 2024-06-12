@@ -11,11 +11,12 @@ import {
 import { MesService } from './mes.service';
 import { CreateMesDto } from './dto/create-mes.dto';
 import { UpdateMesDto } from './dto/update-mes.dto';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Mes } from './entities/mes.entity';
 
 @Controller('meses')
 @ApiTags('Meses')
+@ApiBearerAuth()
 export class MesController {
   constructor(private readonly mesService: MesService) {}
 

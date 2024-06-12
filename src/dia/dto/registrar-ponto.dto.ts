@@ -6,6 +6,6 @@ export class RegistrarPonto {
   diaId?: number;
   @ApiProperty()
   funcionarioId?: string;
-  @ApiProperty()
+  @ApiProperty({ required: true, example: 2 })
   ordemRegistro: OrdemRegistro;
 }

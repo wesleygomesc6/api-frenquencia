@@ -21,7 +21,21 @@ export class FuncionarioService {
   }
 
   hashPassword(senha: string): Promise<string> {
-    return bcrypt.hash(senha, 10);
+    return bcrypt.hash(senha, 6);
+  }
+
+  async findByEmail(email: string) {
+    return await this.prismaService.funcionario.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        senha: true,
+      },
+    });
   }
 
   findAll() {
@@ -31,6 +45,7 @@ export class FuncionarioService {
         nome: true,
         email: true,
         senha: false,
+        meses: true,
       },
     });
   }
@@ -43,6 +58,7 @@ export class FuncionarioService {
         nome: true,
         email: true,
         senha: false,
+        meses: true,
       },
     });
   }

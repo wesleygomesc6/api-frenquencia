@@ -11,12 +11,13 @@ import {
 import { DiaService } from './dia.service';
 import { CreateDiaDto } from './dto/create-dia.dto';
 import { UpdateDiaDto } from './dto/update-dia.dto';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Dia } from './entities/dia.entity';
 import { RegistrarPonto } from './dto/registrar-ponto.dto';
 
 @Controller('dias')
 @ApiTags('Dias')
+@ApiBearerAuth()
 export class DiaController {
   constructor(private readonly diaService: DiaService) {}
 
@@ -29,7 +30,11 @@ export class DiaController {
   @Post('registrar-ponto')
   @ApiCreatedResponse({ type: Dia })
   registrarPonto(@Body() registrarPonto: RegistrarPonto) {
-    return this.diaService.registrarPonto(registrarPonto);
+    try {
+      return this.diaService.registrarPonto(registrarPonto);
+    } catch (error) {
+      throw new Error();
+    }
   }
 
   @Get()
