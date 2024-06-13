@@ -5,14 +5,14 @@ import { PrismaClient } from '@prisma/client';
 export class PrismaService extends PrismaClient {
   constructor() {
     super({
-      log: ['query'],
-      //   log: [
-      //     { emit: 'event', level: 'query' },
-      //     { emit: 'stdout', level: 'info' },
-      //     { emit: 'stdout', level: 'warn' },
-      //     { emit: 'stdout', level: 'error' },
-      //   ],
-      //   errorFormat: 'colorless',
+      log: ['query', 'info'],
+      // log: [
+      //   { emit: 'event', level: 'query' },
+      //   { emit: 'stdout', level: 'info' },
+      //   { emit: 'stdout', level: 'warn' },
+      //   { emit: 'stdout', level: 'error' },
+      // ],
+      errorFormat: 'colorless',
     });
   }
 }

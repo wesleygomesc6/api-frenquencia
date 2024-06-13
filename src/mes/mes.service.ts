@@ -79,4 +79,23 @@ export class MesService {
 
     return `${mes < 10 ? '0' + mes : mes}/${new Date().getFullYear()}`; // adiciona o 0 caso o mes seja menor que 10
   }
+
+  async atualizarSaldoMes(mesId: number) {
+    const sumAllDias = await this.prismaService.dia.groupBy({
+      by: ['mesId'],
+      where: {
+        mesId: mesId,
+      },
+      _sum: {
+        saldoDia: true,
+      },
+    });
+
+    await this.prismaService.mes.update({
+      where: { id: mesId },
+      data: {
+        saldoMes: sumAllDias[0]._sum.saldoDia,
+      },
+    });
+  }
 }

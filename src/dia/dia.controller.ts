@@ -13,7 +13,6 @@ import { CreateDiaDto } from './dto/create-dia.dto';
 import { UpdateDiaDto } from './dto/update-dia.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Dia } from './entities/dia.entity';
-import { RegistrarPonto } from './dto/registrar-ponto.dto';
 
 @Controller('dias')
 @ApiTags('Dias')
@@ -25,16 +24,6 @@ export class DiaController {
   @ApiCreatedResponse({ type: Dia })
   create(@Body() createDiaDto: CreateDiaDto) {
     return this.diaService.create(createDiaDto);
-  }
-
-  @Post('registrar-ponto')
-  @ApiCreatedResponse({ type: Dia })
-  registrarPonto(@Body() registrarPonto: RegistrarPonto) {
-    try {
-      return this.diaService.registrarPonto(registrarPonto);
-    } catch (error) {
-      throw new Error();
-    }
   }
 
   @Get()

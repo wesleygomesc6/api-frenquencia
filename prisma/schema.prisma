@@ -37,10 +37,10 @@ model Mes {
 
 model Dia {
   id                Int         @id @default(autoincrement())
-  horaEntrada       DateTime?   @map("hora_entrada")
-  horaSaidaAlmoco   DateTime?   @map("hora_saida_almoco")
-  horaEntradaAlmoco DateTime?   @map("hora_entrada_almoco")
-  horaSaida         DateTime?   @map("hora_saida")
+  horaEntrada       DateTime?   @unique @map("hora_entrada")
+  horaSaidaAlmoco   DateTime?   @unique @map("hora_saida_almoco")
+  horaEntradaAlmoco DateTime?   @unique @map("hora_entrada_almoco")
+  horaSaida         DateTime?   @unique @map("hora_saida")
   tempoTrabalhado   Int?        @map("tempo_trabalhado")
   saldoDia          Int?        @map("saldo_dia")
   mes               Mes         @relation(fields: [mesId], references: [id], onDelete: Cascade)
