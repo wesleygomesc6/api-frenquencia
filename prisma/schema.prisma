@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Funcionario {
+  id    String @id @default(uuid())
+  nome  String
+  email String @unique
+  senha String
+  dias  Dia[]
+  meses Mes[]
+
+  @@map("funcionarios")
+}
+
+model Mes {
+  id            Int         @id @default(autoincrement())
+  mesAno        String      @map("mes_ano")
+  saldoMes      Int?        @map("saldo_mes")
+  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+  dias          Dia[]
+  funcionarioId String
+
+  @@map("meses")
+}
+
+model Dia {
+  id                Int         @id @default(autoincrement())
+  horaEntrada       DateTime?   @unique @map("hora_entrada")
+  horaSaidaAlmoco   DateTime?   @unique @map("hora_saida_almoco")
+  horaEntradaAlmoco DateTime?   @unique @map("hora_entrada_almoco")
+  horaSaida         DateTime?   @unique @map("hora_saida")
+  tempoTrabalhado   Int?        @map("tempo_trabalhado")
+  saldoDia          Int?        @map("saldo_dia")
+  mes               Mes         @relation(fields: [mesId], references: [id], onDelete: Cascade)
+  mesId             Int         @map("mes_id")
+  funcionario       Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+  funcionarioId     String      @map("funcionario_id")
+
+  @@map("dias")
+}
