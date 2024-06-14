@@ -12,6 +12,7 @@ import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { ApiAcceptedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Funcionario } from './entities/funcionario.entity';
+import { Public } from 'src/decorators/public';
 
 @Controller('funcionarios')
 @ApiTags('Funcionarios')
@@ -20,6 +21,7 @@ export class FuncionarioController {
   constructor(private readonly funcionarioService: FuncionarioService) {}
 
   @Post()
+  @Public()
   @ApiAcceptedResponse({ type: Funcionario })
   create(@Body() createFuncionarioDto: CreateFuncionarioDto) {
     return this.funcionarioService.create(createFuncionarioDto);

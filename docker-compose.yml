@@ -1,12 +1,12 @@
-version: "3"
 
 services:
-  api-frenquencia-mysql:
-    container_name: api-frenquencia-mysql
-    image: mysql
+  api-solid-pg:
+    container_name: api-frequencia-db
+    image: bitnami/mysql
     ports:
       - 3306:3306
     environment:
-      - POSTGRESQL_USERNAME=apifrequencia
-      - POSTGRESQL_PASSWORD=apifrequencia
-      - POSTGRESQL_DATABASE=api_frequencia 
+      - MYSQL_USERNAME=frequencia
+      - MYSQL_PASSWORD=frequencia
+      - MYSQL_ROOT_PASSWORD=frequencia
+      - MYSQL_DATABASE=api_frequencia
