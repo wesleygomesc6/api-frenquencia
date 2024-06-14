@@ -6,6 +6,7 @@ import { RegistroRepetidoError } from './errors/registro-repetido-error';
 import { MesService } from 'src/mes/mes.service';
 import { RegistroPassadoError } from './errors/registro-passado-error';
 import { EntradaNecessariaError } from './errors/entrada-necessaria-error';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class RegistrarPontoService {
@@ -29,17 +30,31 @@ export class RegistrarPontoService {
         HttpStatus.BAD_REQUEST,
       );
     } else {
-      // verificar se ja existe algum registro naquele dia
-      const hoje = new Date().toISOString().split('T')[0];
-      const query = `${hoje}%`;
+      const hoje = new Date();
+      const startOfDay = dayjs(hoje).startOf('date');
+      const endOfDay = dayjs(hoje).endOf('date');
+      const registrouEntrada = await this.prismaService.dia.findFirst({
+        where: {
+          OR: [
+            {
+              horaEntrada: {
+                gte: startOfDay.toDate(),
+                lte: endOfDay.toDate(),
+              },
+            },
+            {
+              horaEntradaAlmoco: {
+                gte: startOfDay.toDate(),
+                lte: endOfDay.toDate(),
+              },
+            },
+          ],
+        },
+      });
 
-      const registroHoje = await this.prismaService.$queryRaw<
-        Dia[]
-      >`SELECT * FROM dias d WHERE d.hora_entrada LIKE ${query} OR d.hora_entrada_almoco LIKE ${query}`;
-
-      if (registroHoje.length > 0) {
+      if (registrouEntrada) {
         throw new HttpException(
-          'Você já registrou todos os pontos no dia atual.',
+          'Você já registrou a entrada no dia atual.',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -180,12 +195,9 @@ export class RegistrarPontoService {
         dia.horaSaida.getTime() - dia.horaEntradaAlmoco.getTime();
     }
 
-    let saldoDia: number;
-    if (tempoEsperado < tempoTrabalhado) {
-      saldoDia = tempoTrabalhado - tempoEsperado;
-    } else {
-      saldoDia = tempoEsperado - tempoTrabalhado;
-    }
+    const trabalhado = dayjs(tempoTrabalhado);
+    const saldoDia = trabalhado.diff(tempoEsperado, 'minute');
+
     return { tempoTrabalhado, saldoDia };
   }
 }
