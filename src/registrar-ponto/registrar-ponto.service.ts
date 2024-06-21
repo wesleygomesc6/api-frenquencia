@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RegistrarPontoEntity } from './entities/registrar-ponto.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Dia } from 'src/dia/entities/dia.entity';
@@ -7,6 +7,10 @@ import { MesService } from 'src/mes/mes.service';
 import { RegistroPassadoError } from './errors/registro-passado-error';
 import { EntradaNecessariaError } from './errors/entrada-necessaria-error';
 import * as dayjs from 'dayjs';
+import { IdNecessarioError } from './errors/id-necessario-error';
+import { EntradaRepetidaError } from './errors/entrada-repetida-error';
+import { NecessarioSaidaAlmocoError } from './errors/necessario-saida-almoco-error';
+import { IntervaloIrregularError } from './errors/intervalo-irregular-error';
 
 @Injectable()
 export class RegistrarPontoService {
@@ -25,10 +29,7 @@ export class RegistrarPontoService {
         },
       });
     } else if (!entradas.includes(registrarPonto.ordemRegistro)) {
-      throw new HttpException(
-        'Necessário enviar o diaId',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new IdNecessarioError();
     } else {
       const hoje = new Date();
       const startOfDay = dayjs(hoje).startOf('date');
@@ -53,10 +54,7 @@ export class RegistrarPontoService {
       });
 
       if (registrouEntrada) {
-        throw new HttpException(
-          'Você já registrou a entrada no dia atual.',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new EntradaRepetidaError();
       }
     }
 
@@ -80,11 +78,20 @@ export class RegistrarPontoService {
         if (diaAtual.horaEntradaAlmoco) {
           throw new RegistroRepetidoError();
         }
-        if (!diaAtual.horaSaidaAlmoco) {
-          throw new HttpException(
-            'Necessário registrar um horário de entrada do almoço.',
-            HttpStatus.BAD_REQUEST,
-          );
+        if (registrarPonto.diaId && !diaAtual.horaSaidaAlmoco) {
+          throw new NecessarioSaidaAlmocoError();
+        }
+        //verificar o intervalo de tempo aqui 1 hora
+        const intervaloDeAlmoco = dayjs(new Date()).diff(
+          diaAtual.horaSaidaAlmoco,
+          'minute',
+        );
+        console.log(intervaloDeAlmoco);
+        if (
+          (registrarPonto.diaId && intervaloDeAlmoco < 60) ||
+          intervaloDeAlmoco > 120
+        ) {
+          throw new IntervaloIrregularError();
         }
         return this.registrarPontoEntradaAlmoco(registrarPonto);
 
@@ -184,19 +191,28 @@ export class RegistrarPontoService {
     dia: Dia,
   ): Promise<{ tempoTrabalhado: number; saldoDia: number }> {
     let tempoTrabalhado: number;
-    const tempoEsperado = 1000 * 60 * 60 * 8; // 8 horas
+    const tempoEsperado = 60 * 8; // 8 horas em minutos
 
     if (dia.horaEntrada) {
-      tempoTrabalhado =
-        Number(dia.horaSaidaAlmoco.getTime() - dia.horaEntrada.getTime()) +
-        Number(dia.horaSaida.getTime() - dia.horaEntradaAlmoco.getTime());
+      const minutosManha = dayjs(dia.horaSaidaAlmoco).diff(
+        dia.horaEntrada,
+        'minute',
+      );
+
+      const minutosTarde = dayjs(dia.horaSaida).diff(
+        dia.horaEntradaAlmoco,
+        'minute',
+      );
+
+      tempoTrabalhado = minutosManha + minutosTarde;
     } else {
-      tempoTrabalhado =
-        dia.horaSaida.getTime() - dia.horaEntradaAlmoco.getTime();
+      tempoTrabalhado = dayjs(dia.horaSaida).diff(
+        dia.horaEntradaAlmoco,
+        'minute',
+      );
     }
 
-    const trabalhado = dayjs(tempoTrabalhado);
-    const saldoDia = trabalhado.diff(tempoEsperado, 'minute');
+    const saldoDia = tempoTrabalhado - tempoEsperado;
 
     return { tempoTrabalhado, saldoDia };
   }
